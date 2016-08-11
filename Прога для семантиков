@@ -1,0 +1,59 @@
+from joblib import Parallel, delayed
+import math
+import numpy as np
+from helper import rematrix
+def some2(d):
+    '''яжпрограммист ахах'''
+    a = open('words.txt','r')
+    A = [i.strip() for i in a.readlines()]
+    a.close()
+    b = open('stories.txt','r')
+    B = [i.strip() for i in b.readlines()]
+    b.close()
+   
+    q1=len(B)
+    q2=len(A)
+    for e in range(q1):
+        B.extend(B[e].split())
+    del B[0:q1]
+    B=sorted(set(B))
+    for e in B:
+        if len(e)==1 and e!='я':
+            B.pop(B.index(e))
+    c = open('text.txt','r')
+    C = [i.strip() for i in c.readlines()]
+    c.close()
+    w=len(C)
+    for e in range(w):
+        C.extend(C[e].split())
+    del C[0:w]
+    Matr=[[0 for i in range(len(B))]for j in range(len(A))]
+    for j in range(len(A)):
+        for i in range(len(C)-(d//2)):
+            if A[j] in C[i:i+d+1]:
+                for e in range(len(B)):
+                    if B[e] in C[i:i+d+1]:
+                        Matr[j][e]+=1
+ 
+    Matr=np.log1p(Matr)
+    def someX(Matr):
+        arif=[]
+        E=[]
+        for e in range(len(Matr)):
+            arif.append(np.sum(Matr[e])/len(Matr[e]))
+            Matr[e]=np.subtract(Matr[e],arif[e])
+            E.append(np.sqrt(np.sum(np.power(Matr[e],2))/len(Matr[e])))
+            if E[e]!=0:
+                Matr[e]=np.divide(Matr[e],E[e])
+        return Matr
+    Matr=someX(Matr)
+    Matr=rematrix(Matr)
+    Matr=someX(Matr)
+    Matr=rematrix(Matr)
+    return Matr
+                       
+ 
+if __name__== '__main__':
+    with Parallel(n_jobs=2) as parallel:
+        r=parallel(delayed(some2)(int(input())) for e in range(1) )
+        print(r)
