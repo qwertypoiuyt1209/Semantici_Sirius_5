@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from joblib import Parallel, delayed
 import multiprocessing as mp
 import pymorphy2
@@ -6,7 +6,6 @@ import re
 import glob
 import os
 import sys
-
 
 FORBIDDEN_TAGS = ['PRCL', 'PREP', 'CONJ', 'UNKN', 'LATN']
 
@@ -18,36 +17,36 @@ def norm2(data):
 
     def stage1(rawfile):
         n_text = []
-        for e in range(len(rawfile)):
+        for e in xrange(len(rawfile)):
             n_text.extend(rawfile[e].split())
-        for e in range(len(n_text)):
+        for e in xrange(len(n_text)):
             n_text[e] = n_text[e].decode('utf-8')
         return n_text
+
     text = stage1(rawtext)
+
     def norm(text):
-        for i in range(len(text)):
+        for i in xrange(len(text)):
             text[i] = re.sub('[^\w\s]', '', text[i], flags=re.U)
             text[i] = text[i].encode('utf-8')
         return text
     corpus = norm(text)
-    norm_corpus=[]
-    for e in range(len(corpus)):
-        A = pymorphy2.MorphAnalyzer()
+    norm_corpus = []
+    analyzer = pymorphy2.MorphAnalyzer()
+    for e in xrange(len(corpus)):
         corpus[e] = corpus[e].decode('utf-8')
-        parsed_value = A.parse(corpus[e])[0]
+        parsed_value = analyzer.parse(corpus[e])[0]
         corpus[e] = parsed_value.normal_form
-
         if all(tag not in parsed_value.tag for tag in FORBIDDEN_TAGS):
             norm_corpus.append(corpus[e])
-    output_filename = os.path.join(output_dir, os.path.basename(filename) + '.txt')
+
+    output_filename = os.path.join(output_dir, os.path.basename(filename))
     with open(output_filename, 'w') as text:
         text.write(' '.join(norm_corpus).encode('utf-8'))
     return output_filename
 
 
-
-
-if __name__=='__main__':
+if __name__ == '__main__':
     # with open('text5.txt', 'r') as story:
     #     C = [i.strip() for i in story.readlines()]
     #
@@ -82,7 +81,16 @@ if __name__=='__main__':
     output_dir = sys.argv[2]
     all_input_files = glob.glob(os.path.join(input_dir, '*.txt'))
 
+    # import cProfile
+    #
+    # pr = cProfile.Profile()
+    # pr.enable()
     input_data = [(filename, output_dir) for filename in all_input_files]
+    # norm2(input_data[0])
+    # pr.disable()
+    # # after your program ends
+    # pr.print_stats(sort="calls")
+
     pool = mp.Pool(processes=8)
     for result_filename in pool.imap_unordered(norm2, input_data):
         print 'Converted {} successfully'.format(result_filename)
