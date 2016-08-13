@@ -24,3 +24,8 @@ Spis = []
             Spis.append('1')
     for i in range(len(Spis)):
         Spis[i] = int(Spis[i])
+    s = ''
+for i in range(len(Spis)):
+    s += Spis[i]
+for e in range(0,64*64*42,64):
+    print(s[e:e+64])
