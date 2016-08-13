@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from joblib import Parallel, delayed
+import glob
+import multiprocessing as mp
+import os
+import sys
+
 import numpy as np
 
 
@@ -23,7 +27,8 @@ def standardize_by_rows(Matr):
     return out_matrix
 
 
-def compute_semantic_matrix(basis_filename, story_filename, corpus_filename, window_size):
+def compute_semantic_matrix(data):
+    basis_filename, story_filename, corpus_filename, window_size = data
     # TODO
     # 1. rename one-letter variables
     # 2. use WITH to work with files:
@@ -45,9 +50,6 @@ def compute_semantic_matrix(basis_filename, story_filename, corpus_filename, win
 
     story_words = tokenize_text(story_paragraphs)
     story_words = sorted(set(story_words))
-    # for e in story_words:
-    #     if len(e)==1 and e!=u'я':
-    #         story_words.pop(story_words.index(e))
 
     with open(corpus_filename) as corpus_file:
         corpus_paragraphs = [i.strip() for i in corpus_file.readlines()]
@@ -65,23 +67,42 @@ def compute_semantic_matrix(basis_filename, story_filename, corpus_filename, win
                     if story_words[e] in corpus_words[i:i + window_size + 1]:
                         matrix[j][e] += 1
 
-    matrix=np.log1p(matrix)
+    # matrix=np.log1p(matrix)
     # matrix = standardize_by_rows(matrix)
     # matrix = standardize_by_rows(matrix.T).T
-    return matrix
-                       
+    cooccurrence_filename = os.path.join(output_dir, os.path.basename(corpus_filename))
+    np.savetxt(cooccurrence_filename, matrix, fmt='%d', delimiter=' ')
+    return corpus_filename
+
  
 if __name__== '__main__':
-    basis_filename = 'basis.txt'
-    story_filename = 'story.txt'
-    corpus_filenames = ['text1.txt', 'text2.txt', 'text3.txt', 'text4.txt']
+    # basis_filename = 'basis.txt'
+    # story_filename = 'story.txt'
+    # corpus_filenames = ['text1.txt', 'text2.txt', 'text3.txt', 'text4.txt']
     window_size = 30
-    with Parallel(n_jobs=4) as parallel:
-        r=parallel(
-            delayed(compute_semantic_matrix)(basis_filename,
-                                             story_filename,
-                                             corpus_filename,
-                                             window_size)
-            for corpus_filename in corpus_filenames
-        )
-        print(r)
+
+    if len(sys.argv) < 3:
+        print 'Sorry, usage: {} <basis-file> <story-file> <corpus-dir> <output-dir>'.format(sys.argv[0])
+        sys.exit(0)
+    basis_filename = sys.argv[1]
+    story_filename = sys.argv[2]
+    corpus_dir = sys.argv[3]
+    output_dir = sys.argv[4]
+    all_input_files = glob.glob(os.path.join(corpus_dir, '*.txt'))
+
+    # import cProfile
+    #
+    # pr = cProfile.Profile()
+    # pr.enable()
+    input_data = [(basis_filename, story_filename, filename, window_size)
+                  for filename in all_input_files]
+    compute_semantic_matrix(input_data[0])
+    # pr.disable()
+    # # after your program ends
+    # pr.print_stats(sort="calls")
+
+    pool = mp.Pool(processes=8)
+    for result_filename in pool.imap_unordered(compute_semantic_matrix, input_data):
+        print 'Corpus file {} processed successfully'.format(result_filename)
+    pool.close()
+    pool.join()
