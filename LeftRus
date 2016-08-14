@@ -1,0 +1,173 @@
+import math
+Afail = open('Time_words.txt', 'r') #начало и конец слов
+Bfail = open('input2.txt','r') #кол-во миллисекунд
+chislo_msec = Bfail.readlines() 
+cq = int(chislo_msec[0])//3000
+l = int(chislo_msec[0])/3000-int(chislo_msec[0])//3000
+kol_intr = cq #кол-во срезов
+if l>0 :
+       kol_intr+=1
+A=[] # итоговы массив
+for i in range(3): 
+    A.append([0] * kol_intr) # массив, куда мы в итоге все сохраним 
+for j in range (kol_intr): 
+    A[0][j]=j+1 
+Bmass = [line.strip() for line in Afail.readlines()] 
+Ok_mass = [[0]*2 for i in range(len(Bmass))] 
+for k in range (len(Bmass)): 
+    c = Bmass[k].find(' ') 
+    a = float(Bmass[k][:c]) 
+    b = float(Bmass[k][c+1:]) 
+    Ok_mass[k][0]=a/1000 
+    Ok_mass[k][1]=b/1000 
+sc = 1 #номер отрезка
+scet = 0 #счётчик
+nstr=0 # номер строки
+scet1=0 # номер элемента массива
+#print (Ok_mass)
+while nstr<len(Bmass): 
+    if Ok_mass[nstr][1]<sc*3: 
+        if Ok_mass[nstr][0]>=(sc-1)*3: 
+            scet +=1 
+            #print (scet,10)
+            nstr+=1
+        else: 
+            scet+= (Ok_mass[nstr][1]-(sc-1)*3)/(Ok_mass[nstr][1]-Ok_mass[nstr][0]) 
+            #print (scet,20)
+            nstr+=1
+        if nstr==len(Bmass):
+            A[1][scet1]=scet
+            #print (A)
+            break
+    elif Ok_mass[nstr][1]==sc*3: 
+        if Ok_mass[nstr][0]>=(sc-1)*3: 
+            scet+=1
+            #print (scet, 30)
+            nstr +=1 
+            A[1][scet1]=scet 
+            #print (A)
+            scet=0 
+            scet1+=1
+            sc+=1
+        else: 
+            #print(scet,40)
+            A[1][scet1] = 3/(Ok_mass[nstr][1]-Ok_mass[nstr][0]) 
+            #print (A)
+            scet=0 
+            nstr+=1 
+            scet1+=1
+            sc+=1
+    else: 
+        if Ok_mass[nstr][0]>=(sc-1)*3 and Ok_mass[nstr][0]<sc*3:
+            #print(Ok_mass[nstr][0], scet1,'iiii')
+            #print (sc*3-Ok_mass[nstr][0],Ok_mass[nstr][1]-Ok_mass[nstr][0],'njnjijnj')
+            scet += (sc*3-Ok_mass[nstr][0])/(Ok_mass[nstr][1]-Ok_mass[nstr][0]) 
+            A[1][scet1] = scet 
+            #print (A)
+            scet1+=1 
+            sc+=1
+            #print (scet,50)
+            scet=0 
+        elif Ok_mass[nstr][0]<(sc-1)*3:
+            A[1][scet1] = 3/(Ok_mass[nstr][1]-Ok_mass[nstr][0])
+            #print(scet, 60)
+            scet=0 
+            scet1+=1
+            sc+=1
+        else:            
+            #print (scet,70)
+            A[1][scet1] = scet 
+            #print(A)
+            scet=0 
+            scet1+=1
+            sc+=1 
+D = open('Text.txt', 'r', encoding ='utf-8')#документ - слова в столбик
+a = [line.strip() for line in D.readlines()] 
+#print (a)
+F=[] # итоговы массив
+for i in range(len(a)): 
+    F.append([0] * 2) # массив, куда мы в итоге все сохраним 
+for j in range (len(a)): 
+    F[j][0]=j+1 
+#print (F)
+kol_fon=0
+y=0
+n_stl=0
+for i in range (len(a)):
+    kol_fon= (len(a[i]))
+    #print (kol_fon,10)
+    #далее прописываются условия произношения/чтения для данного языка
+    if (a[i].find('стн')>-1) or (a[i].find('стл')>-1) or(a[i].find('здн')>-1) or(a[i].find('рдц')>-1) or(a[i].find('рдч')>-1) or(a[i].find('стц')>-1) or(a[i].find('здц')>-1) or(a[i].find('нтск')>-1) or(a[i].find('ндск')>-1) or(a[i].find('ндц')>-1) or(a[i].find('нтств')>-1) or(a[i].find('стск')>-1) or(a[i].find('лнц')>-1) or (a[i].find('вств')>-1):
+        kol_fon-=1
+        #print (kol_fon,40)
+    elif a[i][0]=='е' or a[i][0]=='ё' or a[i][0]=='ю' or a[i][0]=='я':
+        kol_fon+=1
+    for j in range (len(a[i])):
+        #print (a[i][j-1],a[i][j])
+        if (a[i][j-1] != 'а') and (a[i][j-1] != 'е')and (a[i][j-1] != 'ё') and (a[i][j-1] != 'у') and (a[i][j-1] != 'и')and (a[i][j-1] != 'ю') and (a[i][j-1] != 'я') and (a[i][j-1] != 'э') and (a[i][j-1] != 'о') and (a[i][j-1] != 'ы') and (a[i][j-1] == a[i][j])and (j!=0): 
+            kol_fon-=1
+            #print (kol_fon,90)
+        elif (a[i][j]=='ь') or (a[i][j]=='ъ'):
+            kol_fon-=1
+        elif (a[i][j] == ' ' )or (a[i][j]=='-'): 
+            kol_fon-=1 
+        elif (j>0) and((a[i][j-1] == 'а') or (a[i][j-1] == 'е') or (a[i][j-1] == 'ё') or (a[i][j-1] == 'у') or (a[i][j-1] == 'и') or (a[i][j-1] == 'ю') or (a[i][j-1] == 'я') or (a[i][j-1] == 'э') or (a[i][j-1] == 'о') or (a[i][j-1] == 'ы') or (a[i][j-1] == 'ъ') or (a[i][j-1] == 'ь' )) and (a[i][j] == 'е' or a[i][j] == 'ё' or a[i][j] == 'ю' or a[i][j] == 'я'):      
+            kol_fon+=1
+            #print (kol_fon,50)
+    F[n_stl][1] = kol_fon
+    #print (F[n_stl][1])
+    n_stl+=1
+    #print (n_stl)
+print(F)
+#print(n_stl, 'n_stl')
+sum=l=i=0
+sss= 0
+sqqy = 0 #то, то осталось от последнего слова в предыдущем промежутке для обрабатываемого промежутка
+sqqyy = 0 #то, что мы берем от слова на границе со следующим промежутком 
+while i<=scet1:
+    sqqyy = A[1][i]-int((A[1][i]-sqqy)//1)-sqqy
+    #print(l,'l', sqqy, 'sqqy')
+    if l>0:
+        sum += F[l][1]*sqqy
+        #print('sum+',F[l][1]*sqqy)
+        sss+=1
+    if sss!=0:
+        l+=1
+    for m in range (l,l+int((A[1][i]-sqqy)//1)):
+        if m>=n_stl:
+           break
+        else:
+            sum+=F[m][1]
+            #print('sumn', F[m][1])
+            #print(sum, F[m][1])
+        #print (sum)
+    #print(m,'m', n_stl,'n_stl')
+    if sqqyy>0:
+        #print(sqqyy, 'sqqyy')
+        sum+=F[l+int((A[1][i]-sqqy)//1)][1]*sqqyy
+        #print('sum+++',F[l+int((A[1][i]-sqqy)//1)][1]*sqqyy)
+        F[l+int((A[1][i]-sqqy)//1)-1][1]=F[l+int((A[1][i]-sqqy)//1)-1][1]-F[l+int((A[1][i]-sqqy)//1)-1][1]*sqqyy
+    A[2][i]=sum 
+    l+=int((A[1][i]-sqqy)//1)
+    i+=1
+    sqqy = 1-sqqyy
+    sum=0
+print (A)
+k = ''
+for i in range (len(A[0])):
+    k = k+ str(A[0][i])+' '
+k1 = ''
+for i in range (len(A[1])):
+    k1 = k1+ str(A[1][i])+' '
+#print(k,k1, sep='myumnie')
+k2 = ''
+for i in range (len(A[2])):
+    k2 = k2 + str(A[2][i])+' '
+Left = open('Left.txt', 'w')
+print(k, file = Left)
+print(k1, file = Left)
+print(k2, file = Left)
+Afail.close()
+Bfail.close()
+Left.close()
+D.close()
