@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8-*-
 from joblib import Parallel, delayed
 import multiprocessing as mp
 import pymorphy2
