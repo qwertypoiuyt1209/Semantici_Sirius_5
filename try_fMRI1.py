@@ -1,5 +1,4 @@
-#krivo-code
-#TODODO (dodelat')
+
 import numpy as np
 import nibabel
 import sys
@@ -58,8 +57,7 @@ output_dir = sys.argv[2]
 mask_dir = sys.argv[3]
 all_input_files = glob.glob(os.path.join(input_dir, '*'))
 input_data = [(filename, output_dir,mask_dir) for filename in all_input_files]
-print all_input_files
-print input_data
+
 for file in input_data:
     Some, mask = if_mozg(input_data)
 
