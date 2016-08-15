@@ -8,7 +8,7 @@ input_dir = sys.argv[1]
 output_dir = sys.argv[2]
 all_input_files = glob.glob(os.path.join(input_dir, '*'))
 
-FORBIDDEN_TAGS = ['IN','AT','TO','CS','CC','NUM']
+FORBIDDEN_TAGS = ['IN','AT','TO','CS','CC','NUM','PRP','DT']
 def normalize(in_filename, output_dir):
     with open(in_filename) as file:
         raw_text = [i.strip() for i in file.readlines()]
