@@ -88,7 +88,7 @@ if __name__== '__main__':
     story_filename = sys.argv[2]
     corpus_dir = sys.argv[3]
     output_dir = sys.argv[4]
-    all_input_files = glob.glob(os.path.join(corpus_dir, '*.txt'))
+    all_input_files = glob.glob(os.path.join(corpus_dir, '*'))
 
     # import cProfile
     #
@@ -96,7 +96,7 @@ if __name__== '__main__':
     # pr.enable()
     input_data = [(basis_filename, story_filename, filename, window_size)
                   for filename in all_input_files]
-    compute_semantic_matrix(input_data[0])
+    #compute_semantic_matrix(input_data[0])
     # pr.disable()
     # # after your program ends
     # pr.print_stats(sort="calls")
