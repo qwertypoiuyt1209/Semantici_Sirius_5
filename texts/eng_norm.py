@@ -15,7 +15,7 @@ def normalize(in_filename, output_dir):
     for e in range(len(raw_text)):
         text.extend(re.split(r'\W+', raw_text[e]))
     wnl = nltk.WordNetLemmatizer()
-    text = [wnl.lemmatize(t) for t in text]
+    text = [wnl.lemmatize(t.lower()) for t in text]
 
     out_filename = os.path.join(output_dir, os.path.basename(in_filename))
     with open(out_filename,'w') as out_file:
