@@ -119,14 +119,24 @@ data = np.loadtxt('X1.txt') #первый испытуемый
 data = data.T
 lreg = linear_regressor(X_train, data, Ok_matr)
 
-data = np.loadtxt('X2.txt')#второй
-data = data.T
-lreg = linear_regressor(X_train, data, Ok_matr)
+ data = np.loadtxt('X2.txt')#второй
+ data = data.T
+ lreg = linear_regressor(X_train, data, Ok_matr)
 
-data = np.loadtxt('X3.txt')#3
-data = data.T
-lreg = linear_regressor(X_train, data, Ok_matr)
+ data = np.loadtxt('X3.txt')#3
+ data = data.T
+ lreg = linear_regressor(X_train, data, Ok_matr)
 
-data = np.loadtxt('X4.txt')#4
-data = data.T
-print(linear_regressor(X_train, data, Ok_matr))
+ data = np.loadtxt('X4.txt')
+ data = data.T
+ lreg = linear_regressor(X_train, data, Ok_matr)
+ from sklearn.decomposition import PCA
+pca = PCA()
+lreg = np.array(lreg)
+XPCAreduced = pca.fit_transform(lreg)
+#print(XPCAreduced)
+from sklearn.cluster import KMeans
+km = KMeans(n_clusters = 12)
+km.fit(XPCAreduced)
+y_pred = km.predict(XPCAreduced)
+print(y_pred)
