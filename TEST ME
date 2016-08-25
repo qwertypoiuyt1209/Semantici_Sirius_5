@@ -1,0 +1,15 @@
+### functions to test:
+file@ audio.py:
+all functions
+________________
+file@ Norm.promo.py:
+norm2
+________________
+file@ eng_norm.py:
+normalize
+________________
+[file@ try_fMRI1.py:
+if_mozg] --- if it'll be used
+_________________
+file@ build_model.py:
+all functions
